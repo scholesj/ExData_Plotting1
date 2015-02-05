@@ -1,0 +1,17 @@
+library(lubridate)
+hhold <- read.csv("household_power_consumption.txt", sep=";", stringsAsFactors=FALSE)
+hholdFeb <- hhold[hhold$Date=="1/2/2007" | hhold$Date=="2/2/2007",]
+hholdFeb[,3] <- as.numeric(as.character(hholdFeb[,3]))
+hholdFeb[,7] <- as.numeric(as.character(hholdFeb[,7]))
+hholdFeb[,8] <- as.numeric(as.character(hholdFeb[,8]))
+hholdFeb[,9] <- as.numeric(as.character(hholdFeb[,9]))
+startInst <- unclass(parse_date_time("1/2/2007 00:00:00", "dmyhms"))
+hholdFeb$t <- (unclass(parse_date_time(paste(hholdFeb$Date,hholdFeb$Time), "dmyhms"))-startInst)/60
+par(cex=0.8)
+plot(hholdFeb$t, hholdFeb$Sub_metering_1, type="l", xlab="", ylab="Energy sub metering", xaxt="n")
+axis(1,at=c(0,1440,2880),labels=c("Thu", "Fri", "Sat") )
+lines(hholdFeb$t, hholdFeb$Sub_metering_2, col="red")
+lines(hholdFeb$t, hholdFeb$Sub_metering_3, col="blue")
+legend(c(2000,2990), c(40,32), c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), lty=c(1,1,1), lwd=c(2.5,2.5,2.5), col=c("black", "red", "blue"))
+dev.copy(png,"plot3.png")
+dev.off()
